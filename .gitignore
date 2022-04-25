@@ -11,6 +11,8 @@
 *.sln.docstates
 aisd_february_2022.sln
 SSAU_2C2S_lab2.sln
+SSAU_2C2S_lab2.vcxproj.filters
+SSAU_2C2S_lab2.vcxproj
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
