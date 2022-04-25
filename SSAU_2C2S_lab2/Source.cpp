@@ -88,7 +88,6 @@ template<typename T, typename TCompare = std::less<T>>
 Stats HeapSort(std::vector<T>& data)
 {
 	int size = int(data.size());
-	TCompare less;
 	Stats stats;
 	for (int i = size / 2 - 1; i >= 0; --i)
 	{
@@ -107,7 +106,6 @@ Stats HeapSort(std::vector<T>& data)
 
 
 
-
 template<typename T, typename TCompare = std::less<T>>
 bool IsSorted(std::vector<T>& data)
 {
@@ -121,17 +119,13 @@ bool IsSorted(std::vector<T>& data)
 	return true;
 }
 
-//#define DEBUG
+//#define DEMONSTRATION
 //#define SORTED_VECTOR
 //#define SORTED_BACKWARDS_VECTOR
+//#define UNSORTED__VECTOR
+//#define UNSORTED_VECTOR_HEAP_SORT
 int main()
 {
-	/*std::vector<int> vec;
-	for (size_t i = 0; i < 10000; ++i)
-	{
-		vec.push_back(rand() % 100-50);
-	}*/
-
 	setlocale(LC_ALL, "Ru");
 	//Посчитать число сравнений и копирований объекта для полностью отсортированного массива
 	//n = 1 000, 2 000, ... 10 000.
@@ -230,30 +224,152 @@ int main()
 	}
 #endif
 
+#ifdef UNSORTED__VECTOR
+	std::cout << "Число сравнений и копирований при неотсортированном массиве:" << std::endl;
+	for (int i = 1000; i <= 10000; i += 1000)
+	{
+		srand(time(0));
+		size_t bubble_sum_comparison = 0;
+		size_t bubble_sum_copy = 0;
+
+		size_t shell_sum_comparison = 0;
+		size_t shell_sum_copy = 0;
+
+		size_t heap_sum_comparison = 0;
+		size_t heap_sum_copy = 0;
+
+		for (size_t number_of_try = 0; number_of_try < 100; ++number_of_try)
+		{
+			std::vector<int> vec_unsorted;
+			for (size_t j = 0; j <= i; ++j)
+			{
+				vec_unsorted.push_back(rand()%1000000-500000);
+				
+			}
+			auto stats_bubble = BubbleSort(vec_unsorted);
+			//std::chrono::milliseconds timespan(1116);
+			//std::this_thread::sleep_for(timespan);
+			//std::cout << vec_unsorted.size() << std::endl;
+			if (!IsSorted(vec_unsorted)) std::cout << "CRITICAL ERROR BUBBLE SORT" << std::endl;
+			bubble_sum_comparison += stats_bubble.comparison_count;
+			bubble_sum_copy += stats_bubble.copy_count;
+			vec_unsorted.clear();
+
+			for (size_t j = 0; j <= i; ++j)
+			{
+				vec_unsorted.push_back(rand() % 1000000 - 500000);
+			}
+			auto stats_shell = ShellSort(vec_unsorted);
+			if (!IsSorted(vec_unsorted)) std::cout << "CRITICAL ERROR SHELL SORT" << std::endl;
+			shell_sum_comparison += stats_shell.comparison_count;
+			shell_sum_copy += stats_shell.copy_count;
+			vec_unsorted.clear();
+
+			for (size_t j = 0; j <= i; ++j)
+			{
+				vec_unsorted.push_back(rand() % 1000000 - 500000);
+			}
+			auto stats_heap = HeapSort(vec_unsorted);
+			if (!IsSorted(vec_unsorted)) std::cout << "CRITICAL ERROR HEAP SORT" << std::endl;
+			heap_sum_comparison += stats_heap.comparison_count;
+			heap_sum_copy += stats_heap.copy_count;
+			vec_unsorted.clear();
+		}
+
+		std::cout << "Статистика при размере: " << i << std::endl;
+		std::cout << "Сортировка пузырьком, среднее количество сравнений: " << bubble_sum_comparison / 100 << " ; копирований: " << bubble_sum_copy / 100 << std::endl;
+		std::cout << "Сортировка Шелла, среднее количество сравнений: " << shell_sum_comparison / 100 << " ; копирований: " << shell_sum_copy / 100 << std::endl;
+		std::cout << "Сортировка кучей, среднее количество сравнений: " << heap_sum_comparison / 100 << " ; копирований: " << heap_sum_copy / 100 << std::endl;
+	}
+#endif
 
 
+#ifdef UNSORTED_VECTOR_HEAP_SORT
+	std::cout << "Число сравнений и копирований при неотсортированном массиве:" << std::endl;
+	for (int i = 10000; i <= 50000; i += 5000)
+	{
+		srand(time(0));
 
+		size_t heap_sum_comparison = 0;
+		size_t heap_sum_copy = 0;
 
+		for (size_t number_of_try = 0; number_of_try < 100; ++number_of_try)
+		{
+			std::vector<int> vec_unsorted;
+			for (size_t j = 0; j <= i; ++j)
+			{
+				vec_unsorted.push_back(rand() % 1000000 - 500000);
 
+			}
+			auto stats_heap = HeapSort(vec_unsorted);
+			if (!IsSorted(vec_unsorted)) std::cout << "CRITICAL ERROR HEAP SORT" << std::endl;
+			
+			heap_sum_comparison += stats_heap.comparison_count;
+			heap_sum_copy += stats_heap.copy_count;
+			vec_unsorted.clear();
+		}
 
+		std::cout << "Статистика при размере: " << i << std::endl;
+		std::cout << "Сортировка кучей, среднее количество сравнений: " << heap_sum_comparison / 100 << " ; копирований: " << heap_sum_copy / 100 << std::endl;
+	}
+#endif
 
-
-
-/*
-#ifdef DEBUG
+#ifdef DEMONSTRATION
+	srand(time(0));
+	std::vector<double> vec;
+	std::cout << "Демонстрация сортировки пузырьком. Было:" << std::endl;
+	for (int i = 0; i < 10; ++i)
+	{
+		vec.push_back((double)rand()/5-312);
+	}
 	for (auto it : vec)
 	{
 		std::cout << it << " ";
 	}
-	std::cout << std::endl << std::endl;
-#endif
-	// auto stats = BubbleSort(vec);
-#ifdef DEBUG
+	std::cout << std::endl <<  "Стало:" << std::endl;
+	BubbleSort(vec);
 	for (auto it : vec)
 	{
 		std::cout << it << " ";
 	}
+	if (!IsSorted(vec)) std::cout << "CRITICAL ERROR BUBBLE SORT";
+	vec.clear();
+
+
+	std::cout << std::endl << std::endl << "Демонстрация сортировки Шелла. Было:" << std::endl;
+	for (int i = 0; i < 10; ++i)
+	{
+		vec.push_back((double)rand() / 5 - 312);
+	}
+	for (auto it : vec)
+	{
+		std::cout << it << " ";
+	}
+	std::cout << std::endl << "Стало:" << std::endl;
+	BubbleSort(vec);
+	for (auto it : vec)
+	{
+		std::cout << it << " ";
+	}
+	if (!IsSorted(vec)) std::cout << "CRITICAL ERROR SHELL SORT";
+	vec.clear();
+
+	std::cout << std::endl << std::endl << "Демонстрация сортировки кучей. Было:" << std::endl;
+	for (int i = 0; i < 10; ++i)
+	{
+		vec.push_back((double)rand() / 5 - 312);
+	}
+	for (auto it : vec)
+	{
+		std::cout << it << " ";
+	}
+	std::cout << std::endl << "Стало:" << std::endl;
+	BubbleSort(vec);
+	for (auto it : vec)
+	{
+		std::cout << it << " ";
+	}
+	if (!IsSorted(vec)) std::cout << "CRITICAL ERROR HEAP SORT";
+	vec.clear();
 #endif
-	// if (!IsSorted(vec)) std::cout << "error";
-	*/
 }
